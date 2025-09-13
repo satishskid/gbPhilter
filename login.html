@@ -73,7 +73,7 @@
                 signInDiv.innerHTML = ''; // Clear loading spinner
                 
                 clerk.mountSignIn(signInDiv, {
-                    afterSignInUrl: '/index.html',
+                    fallbackRedirectUrl: '/index.html',
                     appearance: {
                         elements: {
                             formButtonPrimary: 'clerk-button-primary',

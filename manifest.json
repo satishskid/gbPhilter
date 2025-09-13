@@ -1,0 +1,66 @@
+{
+  "name": "PHI De-ID Studio",
+  "short_name": "PHI Studio",
+  "description": "Offline AI-powered de-identification tool for clinical notes and medical documents. HIPAA-compliant processing with no cloud dependencies.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#1e293b",
+  "icons": [
+    {
+      "src": "assets/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "orientation": "portrait-primary",
+  "categories": ["medical", "productivity", "healthcare", "utilities"],
+  "lang": "en",
+  "scope": "/",
+  "prefer_related_applications": false,
+  "screenshots": [
+    {
+      "src": "assets/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "PHI De-ID Studio on desktop"
+    },
+    {
+      "src": "assets/screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "PHI De-ID Studio on mobile"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Upload Documents",
+      "short_name": "Upload",
+      "description": "Quickly upload new documents for de-identification",
+      "url": "/?action=upload",
+      "icons": [{ "src": "assets/logo.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Settings",
+      "short_name": "Settings",
+      "description": "Configure de-identification preferences",
+      "url": "/?action=settings",
+      "icons": [{ "src": "assets/logo.png", "sizes": "96x96" }]
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+phi",
+      "url": "/?uri=%s"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test 2</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h1>Test Page 2</h1>
+    <div id="test">Testing...</div>
+    
+    <script>
+        console.log('Inline script works');
+        document.getElementById('test').innerHTML = 'Script loaded successfully';
+    </script>
+    
+    <script src="llama.js"></script>
+    <script>
+        console.log('Llama class:', typeof Llama);
+        if (typeof Llama !== 'undefined') {
+            console.log('Llama.js loaded successfully');
+        }
+    </script>
+    
+    <script src="deid-engine.js"></script>
+    <script>
+        console.log('DeidentificationEngine class:', typeof DeidentificationEngine);
+        if (typeof DeidentificationEngine !== 'undefined') {
+            console.log('deid-engine.js loaded successfully');
+        }
+    </script>
+</body>
+</html>

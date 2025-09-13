@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PHI De-ID Studio</title>
+  <meta name="description" content="HIPAA-compliant PHI de-identification tool with offline AI processing">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="assets/favicon.ico" />
+  <link rel="stylesheet" href="style.css" />
+  
+  <!-- External Libraries -->
+  <script src="llama.js"></script>
+  <script src="pdf.worker.min.js"></script>
+  <script src="xlsx.full.min.js"></script>
+  <script src="tesseract.min.js"></script>
+  <script src="deid-engine.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- Navigation Sidebar -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <img src="assets/logo.png" alt="PHI Studio" class="sidebar-logo">
+        <h2>PHI Studio</h2>
+      </div>
+      
+      <ul class="nav-menu">
+        <li class="nav-item active" data-view="upload">
+          <span class="nav-icon">📁</span>
+          <span class="nav-text">Upload</span>
+        </li>
+        <li class="nav-item" data-view="process">
+          <span class="nav-icon">⚡</span>
+          <span class="nav-text">Process</span>
+        </li>
+        <li class="nav-item" data-view="results">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Results</span>
+        </li>
+        <li class="nav-item" data-view="settings">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-text">Settings</span>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+          <div class="status-indicator" id="onlineStatus">Online</div>
+          <div class="status-indicator">
+            <span id="model-status">🤖 Loading AI...</span>
+          </div>
+          <div class="offline-status">
+            <span id="connection-status">📡 Online</span>
+          </div>
+          <button class="btn btn-secondary" onclick="showSystemHealth()" style="width: 100%; margin-bottom: 0.5rem;">
+            🔍 System Health Check
+          </button>
+          <p>PHI De-ID Studio v1.0</p>
+          <p class="text-muted">HIPAA Compliant</p>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="main-header">
+        <button class="menu-toggle" id="menuToggle">☰</button>
+        <h1 id="current-title">Upload Documents</h1>
+        <div class="header-actions">
+          <button class="btn-secondary" id="helpBtn">❓ Help</button>
+        </div>
+      </header>
+
+      <!-- Upload View -->
+      <section class="view" id="upload-view">
+        <div class="upload-area" id="uploadArea">
+          <div class="upload-icon">📄</div>
+          <h2>Upload Clinical Documents</h2>
+          <p>Drag & drop files here or click to browse</p>
+          <p class="file-types">Supports: CSV, Excel, PDF, JPG, PNG, TXT</p>
+          <input type="file" id="fileInput" multiple accept=".csv,.xlsx,.xls,.pdf,.jpg,.jpeg,.png,.txt" />
+          <button class="btn-primary" id="browseBtn">Browse Files</button>
+        </div>
+
+        <div class="upload-queue" id="uploadQueue" style="display: none;">
+          <h3>Processing Queue</h3>
+          <div class="file-list" id="fileList"></div>
+        </div>
+      </section>
+
+      <!-- Process View -->
+      <section class="view hidden" id="process-view">
+        <div class="process-controls">
+          <h2>Processing Options</h2>
+          <div class="settings-grid">
+            <div class="setting-group">
+              <label>De-identification Level:</label>
+              <select id="deidLevel">
+                <option value="safe">Safe (Names, SSN, DOB)</option>
+                <option value="comprehensive" selected>Comprehensive (+ Addresses, Phone)</option>
+                <option value="strict">Strict (All identifiers)</option>
+              </select>
+            </div>
+            
+            <div class="setting-group">
+              <label>Output Format:</label>
+              <select id="outputFormat">
+                <option value="txt">Plain Text</option>
+                <option value="csv">CSV</option>
+                <option value="json">JSON</option>
+              </select>
+            </div>
+
+            <div class="setting-group">
+            <label>
+              <input type="checkbox" id="preserveStructure" checked>
+              Preserve Document Structure
+            </label>
+            <label>
+              <input type="checkbox" id="redactEmails" checked>
+              Redact Email Addresses
+            </label>
+            <label>
+              <input type="checkbox" id="redactURLs" checked>
+              Redact URLs and Web Addresses
+            </label>
+            <label>
+              <input type="checkbox" id="redactCreditCards" checked>
+              Redact Credit Card Numbers
+            </label>
+            <label>
+              <input type="checkbox" id="redactDriversLicense" checked>
+              Redact Driver's License Numbers
+            </label>
+          </div>
+          <div class="setting-group">
+            <h4>Custom Patterns</h4>
+            <textarea id="customPatterns" placeholder="Enter custom regex patterns, one per line"></textarea>
+            <small>Add custom regex patterns to detect additional PHI types</small>
+          </div>
+          </div>
+        </div>
+
+        <div class="processing-status" id="processingStatus" style="display: none;">
+          <div class="processing-header">
+            <div class="processing-stats">
+              <span id="filesProcessed">0</span> / <span id="totalFiles">0</span> files processed
+            </div>
+            <div class="processing-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" id="overallProgress"></div>
+              </div>
+              <span id="progressText">0%</span>
+            </div>
+          </div>
+          
+          <div class="processing-preview">
+            <div class="preview-section">
+              <h3>Original Text Preview</h3>
+              <div id="originalPreview" class="text-preview"></div>
+            </div>
+            
+            <div class="preview-section">
+              <h3>Redacted Text Preview</h3>
+              <div id="redactedPreview" class="text-preview"></div>
+            </div>
+            
+            <div class="preview-section">
+              <h3>PHI Detection Summary</h3>
+              <div id="phiSummary" class="phi-stats">
+                <div class="stat-item">
+                  <span class="stat-label">Names Found:</span>
+                  <span class="stat-value" id="namesCount">0</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Dates Found:</span>
+                  <span class="stat-value" id="datesCount">0</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Addresses Found:</span>
+                  <span class="stat-value" id="addressesCount">0</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Phone Numbers:</span>
+                  <span class="stat-value" id="phonesCount">0</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Total PHI Items:</span>
+                  <span class="stat-value" id="totalPHI">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Results View -->
+      <section class="view hidden" id="results-view">
+        <div class="results-header">
+          <h2>Processed Results</h2>
+          <div class="results-actions">
+            <button class="btn-secondary" id="exportAllBtn">📥 Export All</button>
+            <button class="btn-secondary" id="clearResultsBtn">🗑️ Clear</button>
+          </div>
+        </div>
+
+        <div class="results-grid" id="resultsGrid">
+          <div class="empty-state">
+            <div class="empty-icon">📊</div>
+            <h3>No Results Yet</h3>
+            <p>Upload and process documents to see results here</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Settings View -->
+      <section class="view hidden" id="settings-view">
+        <h2>Settings</h2>
+        
+        <div class="settings-section">
+          <h3>De-identification Rules</h3>
+          <div class="rules-list" id="rulesList">
+            <!-- Rules will be populated by JavaScript -->
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Export Settings</h3>
+          <div class="setting-group">
+            <label>Default Export Format:</label>
+            <select id="defaultExportFormat">
+              <option value="txt">Plain Text</option>
+              <option value="csv">CSV</option>
+              <option value="json">JSON</option>
+            </select>
+          </div>
+          
+          <div class="setting-group">
+            <label>Include Processing Metadata:</label>
+            <input type="checkbox" id="includeMetadata" checked>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>System Information</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <strong>AI Model:</strong>
+              <span id="modelInfo">meditron.Q4_K_M.gguf</span>
+            </div>
+            <div class="info-item">
+              <strong>Storage Used:</strong>
+              <span id="storageUsed">Calculating...</span>
+            </div>
+            <div class="info-item">
+              <strong>Version:</strong>
+              <span id="appVersion">1.0.0</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modals -->
+    <div class="modal hidden" id="helpModal">
+      <div class="modal-content">
+        <h3>How to Use PHI De-ID Studio</h3>
+        <div class="help-content">
+          <h4>1. Upload Documents</h4>
+          <p>Drag and drop or browse for CSV, Excel, PDF, or image files containing clinical data.</p>
+          
+          <h4>2. Configure Processing</h4>
+          <p>Choose your de-identification level and output format preferences.</p>
+          
+          <h4>3. Process & Review</h4>
+          <p>The AI will identify and redact PHI while preserving clinical meaning.</p>
+          
+          <h4>4. Export Results</h4>
+          <p>Download processed documents in your preferred format.</p>
+        </div>
+        <button class="btn-primary" onclick="closeModal('helpModal')">Got it!</button>
+      </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay hidden" id="loadingOverlay">
+      <div class="loading-content">
+        <div class="spinner-large"></div>
+        <h3>Loading AI Model...</h3>
+        <p>This may take a moment on first use</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

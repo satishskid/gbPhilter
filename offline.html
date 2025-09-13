@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHI De-ID Studio - Offline</title>
+    <meta name="theme-color" content="#0f172a">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .offline-container {
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .offline-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .offline-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: #3b82f6;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #f1f5f9;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+
+        .features {
+            text-align: left;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .features h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #f1f5f9;
+        }
+
+        .features ul {
+            list-style: none;
+        }
+
+        .features li {
+            padding: 5px 0;
+            color: #94a3b8;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        .features li::before {
+            content: "✓";
+            color: #10b981;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .retry-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .retry-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .status-indicator {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .pulse {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+        </div>
+        
+        <h1>You're Offline</h1>
+        <p>PHI De-ID Studio is designed to work offline. Once you're back online, the app will sync automatically.</p>
+        
+        <div class="features">
+            <h3>Available Offline:</h3>
+            <ul>
+                <li>Document upload and processing</li>
+                <li>PHI de-identification algorithms</li>
+                <li>Export processed documents</li>
+                <li>Settings configuration</li>
+                <li>All core features remain functional</li>
+            </ul>
+        </div>
+        
+        <button class="retry-btn" onclick="checkConnection()">Retry Connection</button>
+        
+        <div class="status-indicator">
+            <span class="pulse"></span>
+            <span id="status-text">Checking connection...</span>
+        </div>
+    </div>
+
+    <script>
+        function checkConnection() {
+            const statusText = document.getElementById('status-text');
+            const pulse = document.querySelector('.pulse');
+            
+            statusText.textContent = 'Checking connection...';
+            pulse.style.background = '#f59e0b';
+            
+            fetch('/', { method: 'HEAD', cache: 'no-cache' })
+                .then(() => {
+                    statusText.textContent = 'Back online! Redirecting...';
+                    pulse.style.background = '#10b981';
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1500);
+                })
+                .catch(() => {
+                    statusText.textContent = 'Still offline - app ready for use';
+                    pulse.style.background = '#ef4444';
+                });
+        }
+
+        // Check connection on page load
+        window.addEventListener('load', () => {
+            setTimeout(checkConnection, 1000);
+        });
+
+        // Listen for online/offline events
+        window.addEventListener('online', () => {
+            document.getElementById('status-text').textContent = 'Back online! Redirecting...';
+            document.querySelector('.pulse').style.background = '#10b981';
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 1500);
+        });
+
+        window.addEventListener('offline', () => {
+            document.getElementById('status-text').textContent = 'Offline mode - all features available';
+            document.querySelector('.pulse').style.background = '#ef4444';
+        });
+    </script>
+</body>
+</html>

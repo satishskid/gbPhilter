@@ -1,5 +1,5 @@
 // Global state management
-let llama = null;
+let llamaInstance = null;
 let modelLoaded = false;
 let fileQueue = [];
 let processedFiles = [];
@@ -27,8 +27,8 @@ async function loadModel() {
   const modelPath = './meditron.Q4_K_M.gguf';
 
   try {
-    window.llama = new window.Llama({ wasmPath });
-    await window.llama.loadModel(modelPath);
+    llamaInstance = new window.Llama({ wasmPath });
+    await llamaInstance.loadModel(modelPath);
     modelLoaded = true;
     console.log('✅ Model loaded!');
     updateModelStatus(true);
@@ -76,7 +76,7 @@ async function runLLM(prompt) {
   }
 
   try {
-    const response = await llama.generate({
+    const response = await llamaInstance.generate({
       prompt: prompt,
       n_predict: 512,
       temperature: 0.1,
@@ -1306,4 +1306,4 @@ document.addEventListener('DOMContentLoaded', () => {
     auth = new SimpleAuth();
 });
 
-// ... existing code continues ...
+// ... existing code continues ...// Cache bust: Sat Sep 13 13:14:27 IST 2025

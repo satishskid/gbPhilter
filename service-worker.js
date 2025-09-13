@@ -1,6 +1,6 @@
-const CACHE_NAME = 'phi-deid-studio-v2';
-const STATIC_CACHE = 'phi-static-v2';
-const DYNAMIC_CACHE = 'phi-dynamic-v2';
+const CACHE_NAME = 'phi-deid-studio-v3';
+const STATIC_CACHE = 'phi-static-v3';
+const DYNAMIC_CACHE = 'phi-dynamic-v3';
 
 const STATIC_ASSETS = [
   '/',

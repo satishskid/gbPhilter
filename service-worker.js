@@ -4,10 +4,12 @@ const DYNAMIC_CACHE = 'phi-dynamic-v3';
 
 const STATIC_ASSETS = [
   '/',
+  '/landing.html',
   '/index.html',
   '/style.css',
   '/script.js',
   '/llama.js',
+  '/deid-engine.js',
   '/pdf.worker.min.js',
   '/xlsx.full.min.js',
   '/tesseract.min.js',

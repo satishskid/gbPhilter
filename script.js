@@ -1074,3 +1074,236 @@ window.addEventListener('DOMContentLoaded', async () => {
     }, 1000);
   }
 });
+
+// Simple Authentication System
+const AUTH_CONFIG = {
+    username: 'qnalyticss',
+    password: 'deid2024',
+    storageKey: 'phideid_auth'
+};
+
+class SimpleAuth {
+    constructor() {
+        this.isAuthenticated = this.checkAuth();
+        this.init();
+    }
+
+    init() {
+        if (!this.isAuthenticated) {
+            this.showLogin();
+        } else {
+            this.showApp();
+        }
+    }
+
+    checkAuth() {
+        const auth = localStorage.getItem(AUTH_CONFIG.storageKey);
+        return auth === 'authenticated';
+    }
+
+    login(username, password) {
+        if (username === AUTH_CONFIG.username && password === AUTH_CONFIG.password) {
+            localStorage.setItem(AUTH_CONFIG.storageKey, 'authenticated');
+            this.isAuthenticated = true;
+            this.hideLogin();
+            this.showApp();
+            return true;
+        }
+        return false;
+    }
+
+    logout() {
+        localStorage.removeItem(AUTH_CONFIG.storageKey);
+        this.isAuthenticated = false;
+        this.hideApp();
+        this.showLogin();
+    }
+
+    showLogin() {
+        const loginModal = document.createElement('div');
+        loginModal.id = 'auth-modal';
+        loginModal.innerHTML = `
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <img src="assets/logo.png" alt="PHI De-ID Studio" class="auth-logo">
+                        <h2>PHI De-ID Studio</h2>
+                        <p>Secure Login Required</p>
+                    </div>
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Sign In</button>
+                        <div id="auth-error" class="auth-error" style="display: none;">
+                            Invalid credentials. Please try again.
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(loginModal);
+
+        // Add styles
+        if (!document.getElementById('auth-styles')) {
+            const styles = document.createElement('style');
+            styles.id = 'auth-styles';
+            styles.textContent = `
+                #auth-modal {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                }
+                .auth-container {
+                    max-width: 400px;
+                    width: 90%;
+                    padding: 20px;
+                }
+                .auth-card {
+                    background: white;
+                    border-radius: 12px;
+                    padding: 40px;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+                    text-align: center;
+                }
+                .auth-logo {
+                    width: 60px;
+                    height: 60px;
+                    margin-bottom: 20px;
+                }
+                .auth-header h2 {
+                    margin: 0 0 10px 0;
+                    color: #333;
+                    font-size: 24px;
+                }
+                .auth-header p {
+                    margin: 0 0 30px 0;
+                    color: #666;
+                    font-size: 16px;
+                }
+                .form-group {
+                    margin-bottom: 20px;
+                    text-align: left;
+                }
+                .form-group label {
+                    display: block;
+                    margin-bottom: 5px;
+                    color: #555;
+                    font-weight: 500;
+                }
+                .form-group input {
+                    width: 100%;
+                    padding: 12px;
+                    border: 1px solid #ddd;
+                    border-radius: 6px;
+                    font-size: 16px;
+                    box-sizing: border-box;
+                }
+                .form-group input:focus {
+                    outline: none;
+                    border-color: #667eea;
+                }
+                .btn-primary {
+                    width: 100%;
+                    padding: 14px;
+                    background: #667eea;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    font-size: 16px;
+                    cursor: pointer;
+                    transition: background 0.3s;
+                }
+                .btn-primary:hover {
+                    background: #5a6fd8;
+                }
+                .auth-error {
+                    margin-top: 15px;
+                    padding: 10px;
+                    background: #fee;
+                    color: #c33;
+                    border-radius: 4px;
+                    font-size: 14px;
+                }
+                .logout-btn {
+                    position: absolute;
+                    top: 20px;
+                    right: 20px;
+                    background: rgba(255,255,255,0.1);
+                    color: white;
+                    border: 1px solid rgba(255,255,255,0.2);
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 14px;
+                }
+                .logout-btn:hover {
+                    background: rgba(255,255,255,0.2);
+                }
+            `;
+            document.head.appendChild(styles);
+        }
+
+        // Handle login form
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (this.login(username, password)) {
+                document.getElementById('auth-error').style.display = 'none';
+            } else {
+                document.getElementById('auth-error').style.display = 'block';
+            }
+        });
+    }
+
+    hideLogin() {
+        const loginModal = document.getElementById('auth-modal');
+        if (loginModal) {
+            loginModal.style.opacity = '0';
+            setTimeout(() => loginModal.remove(), 300);
+        }
+    }
+
+    showApp() {
+        // Ensure main app is visible
+        document.body.style.overflow = 'auto';
+        
+        // Add logout button to main app
+        if (!document.getElementById('logout-btn')) {
+            const logoutBtn = document.createElement('button');
+            logoutBtn.id = 'logout-btn';
+            logoutBtn.textContent = 'Logout';
+            logoutBtn.className = 'logout-btn';
+            logoutBtn.onclick = () => this.logout();
+            document.body.appendChild(logoutBtn);
+        }
+    }
+
+    hideApp() {
+        document.body.style.overflow = 'hidden';
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) logoutBtn.remove();
+    }
+}
+
+// Initialize auth when DOM is ready
+let auth;
+document.addEventListener('DOMContentLoaded', () => {
+    auth = new SimpleAuth();
+});
+
+// ... existing code continues ...

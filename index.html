@@ -11,10 +11,23 @@
   <link rel="stylesheet" href="style.css" />
   
   <!-- External Libraries -->
-  <script src="llama.js"></script>
+  <script 
+      async 
+      crossorigin="anonymous" 
+      data-clerk-publishable-key="pk_test_bWF4aW11bS1waXBlZmlzaC0xOS5jbGVyay5hY2NvdW50cy5kZXYk" 
+      src="https://maximum-pipefish-19.clerk.accounts.dev/npm/@clerk/clerk-js@5/dist/clerk.browser.js" 
+      type="text/javascript">
+  </script>
   <script src="pdf.worker.min.js"></script>
   <script src="xlsx.full.min.js"></script>
   <script src="tesseract.min.js"></script>
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Scripts -->
+  <script src="clerk-config.js"></script>
+  <script src="llama.js"></script>
   <script src="deid-engine.js"></script>
   <script src="script.js"></script>
 </head>
@@ -54,6 +67,12 @@
           <div class="offline-status">
             <span id="connection-status">📡 Online</span>
           </div>
+          
+          <!-- Clerk Authentication Section -->
+          <div id="auth-section" style="margin: 1rem 0; text-align: center;">
+            <!-- Clerk auth buttons will be inserted here -->
+          </div>
+          
           <button class="btn btn-secondary" onclick="showSystemHealth()" style="width: 100%; margin-bottom: 0.5rem;">
             🔍 System Health Check
           </button>
@@ -297,3 +316,11 @@
   <script src="script.js"></script>
 </body>
 </html>
+            <div class="nav-links">
+                <a href="landing.html">Home</a>
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <div id="auth-section">
+                    <!-- Clerk auth buttons will be inserted here -->
+                </div>
+            </div>

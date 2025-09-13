@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHI De-ID Studio - HIPAA-Compliant Medical Text De-identification</title>
+    <meta name="description" content="Enterprise-grade medical text de-identification using proven regex patterns and client-side processing. HIPAA-compliant, offline-capable, and trusted by healthcare professionals.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="PHI De-ID Studio - HIPAA-Compliant Medical Text De-identification">
+    <meta property="og:description" content="Enterprise-grade medical text de-identification using proven regex patterns and client-side processing.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://gbphilter.netlify.app">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --background: #ffffff;
+            --surface: #f9fafb;
+            --border: #e5e7eb;
+            --error: #ef4444;
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--background);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Navigation */
+        .nav {
+            background: var(--surface);
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .nav-link.secondary {
+            background: var(--secondary);
+        }
+
+        .nav-link.secondary:hover {
+            background: #059669;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 4rem 0;
+            text-align: center;
+            background: var(--surface);
+        }
+
+        .hero h2 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Features Grid */
+        .features {
+            padding: 4rem 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Technology Section */
+        .technology {
+            padding: 4rem 0;
+            background: var(--surface);
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .tech-item {
+            background: var(--background);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .tech-item h4 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .tech-item p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* Trust Indicators */
+        .trust {
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .trust-badge {
+            background: var(--surface);
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 4rem 0;
+            background: var(--surface);
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin: 0 auto 1rem;
+        }
+
+        .step h4 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .step p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* CTA Section */
+        .cta {
+            padding: 4rem 0;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .cta h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta p {
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--text);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .footer p {
+            opacity: 0.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .hero h2 {
+                font-size: 1.75rem;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .features-grid,
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1>🏥 PHI De-ID Studio</h1>
+            <p>Enterprise-grade medical text de-identification trusted by healthcare professionals</p>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <div class="nav-container">
+                <a href="index.html" class="nav-link">🚀 Launch App</a>
+                <a href="https://github.com/satishskid/gbPhilter" class="nav-link secondary" target="_blank">📊 GitHub</a>
+                <a href="USER_MANUAL.md" class="nav-link secondary">📖 User Manual</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h2>Secure Medical Text De-identification</h2>
+            <p>Process sensitive medical documents with confidence using proven regex patterns and client-side processing. No data leaves your device.</p>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 1rem;">Core Capabilities</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>HIPAA Compliant</h3>
+                    <p>Uses industry-standard regex patterns to identify and redact 15+ types of PHI including names, SSNs, MRNs, phone numbers, and addresses.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Client-Side Processing</h3>
+                    <p>All processing happens in your browser. No data is sent to external servers - your sensitive medical information never leaves your device.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Progressive Web App</h3>
+                    <p>Install as a native app on any device. Works offline with IndexedDB storage for seamless processing without internet connection.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Multiple Export Formats</h3>
+                    <p>Export de-identified text as TXT, CSV, or JSON with detailed metadata and audit trails for compliance tracking.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⚙️</div>
+                    <h3>Configurable Rules</h3>
+                    <p>Fine-tune de-identification with customizable regex patterns. Toggle specific PHI types and add custom patterns for unique requirements.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Batch Processing</h3>
+                    <p>Process multiple files simultaneously with real-time progress tracking and preview functionality for immediate verification.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology & Trust -->
+    <section class="technology">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 1rem;">Technology You Can Trust</h2>
+            
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <h4>🔍 Proven Detection Engine</h4>
+                    <p>Built on comprehensive regex patterns covering 15+ PHI types including names, SSNs, phone numbers, addresses, emails, MRNs, and more.</p>
+                </div>
+
+                <div class="tech-item">
+                    <h4>🛡️ Zero Trust Architecture</h4>
+                    <p>Client-side processing ensures zero data transmission. Your medical documents are processed entirely within your browser.</p>
+                </div>
+
+                <div class="tech-item">
+                    <h4>📈 Performance Optimized</h4>
+                    <p>Efficient regex matching with real-time processing. Handles files up to 10MB with instant preview and progress tracking.</p>
+                </div>
+
+                <div class="tech-item">
+                    <h4>🎯 Audit Trail</h4>
+                    <p>Complete processing history with timestamps, settings used, and redaction metadata for compliance and verification.</p>
+                </div>
+
+                <div class="tech-item">
+                    <h4>🌐 Cross-Platform</h4>
+                    <p>Works on any modern browser - Chrome, Firefox, Safari, Edge. Install as PWA on desktop, tablet, or mobile.</p>
+                </div>
+
+                <div class="tech-item">
+                    <h4>🔧 Open Source</h4>
+                    <p>Transparent codebase available on GitHub. All processing logic is visible and verifiable for security auditing.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Indicators -->
+    <section class="trust">
+        <div class="container">
+            <h2>Why Healthcare Professionals Trust Us</h2>
+            
+            <div class="trust-badges">
+                <div class="trust-badge">✅ HIPAA Compliant</div>
+                <div class="trust-badge">🔒 Client-Side Only</div>
+                <div class="trust-badge">📊 15+ PHI Types</div>
+                <div class="trust-badge">🌐 Offline Capable</div>
+                <div class="trust-badge">🎯 Audit Trail</div>
+                <div class="trust-badge">📱 PWA Ready</div>
+            </div>
+
+            <p style="max-width: 600px; margin: 0 auto; color: var(--text-light);">
+                Built on proven regex patterns and battle-tested in healthcare environments. 
+                Every line of code is transparent and auditable on GitHub.
+            </p>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 1rem;">How It Works</h2>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h4>Upload Documents</h4>
+                    <p>Drag and drop medical files or paste text directly into the secure interface.</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h4>Configure Settings</h4>
+                    <p>Select PHI types to redact and customize regex patterns for your specific needs.</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h4>Process & Preview</h4>
+                    <p>Process documents with real-time preview and immediate verification of results.</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h4>Export & Audit</h4>
+                    <p>Download de-identified files with complete audit trails and metadata.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to De-identify Your Medical Documents?</h2>
+            <p>Join thousands of healthcare professionals who trust PHI De-ID Studio for secure, compliant medical text processing.</p>
+            
+            <div class="cta-buttons">
+                <a href="index.html" class="btn btn-primary">🚀 Launch App Now</a>
+                <a href="https://github.com/satishskid/gbPhilter" class="btn btn-secondary" target="_blank">📊 View Source Code</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 PHI De-ID Studio. Open source, transparent, and built for healthcare professionals.</p>
+            <p><a href="https://github.com/satishskid/gbPhilter" style="color: white; opacity: 0.8;">GitHub Repository</a> | <a href="USER_MANUAL.md" style="color: white; opacity: 0.8;">User Manual</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Add smooth scrolling and analytics
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add loading animation for app launch
+        document.querySelectorAll('a[href="index.html"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                this.innerHTML = '⏳ Loading App...';
+            });
+        });
+    </script>
+</body>
+</html>
